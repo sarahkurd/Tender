@@ -21,8 +21,13 @@
             android:layout_gravity="center_horizontal"
             app:srcCompat="@drawable/tenderlogo" />
 
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/email_login_text"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
@@ -33,7 +38,7 @@
             android:hint="Email"/>
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/password_login_text"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
@@ -53,6 +58,14 @@
             android:background="@color/colorPrimary"
             android:text="Login" />
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="350dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/listDivider" />
+
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_signup"
             android:layout_width="310dp"
@@ -60,5 +73,15 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             />
+
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorAccent"
+            android:text="Register Here" />
+
     </LinearLayout>
 </RelativeLayout>
