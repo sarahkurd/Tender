@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/join_tender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:textAlignment="center"
+            android:textSize="22dp"
+            android:textColor="@color/colorPrimary"
+            android:text="Join the Tender Community!"/>
+
+        <EditText
+            android:id="@+id/et_first_name"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:background="#11000000"
+            android:hint="First Name"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/et_last_name"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:background="#11000000"
+            android:hint="Last Name"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:inputType="textPersonName"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:background="#11000000"
+            android:padding="10dp"
+            android:hint="Email"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:padding="10dp"
+            android:background="#11000000"
+            android:layout_gravity="center_horizontal"
+            android:hint="Password"
+            android:layout_marginTop="20dp"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimary"
+            android:text="Register" />
+    </LinearLayout>
+</RelativeLayout>
