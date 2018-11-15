@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Tender</string>
+
+    <string-array name="cuisine_array">
+        <item>Italian</item>
+        <item>Mexican</item>
+        <item>Japanese</item>
+        <item>Chinese</item>
+        <item>Thai</item>
+        <item>American</item>
+        <item>Mediterranean</item>
+        <item>Island/Caribbean</item>
+    </string-array>
 </resources>

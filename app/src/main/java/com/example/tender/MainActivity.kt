@@ -23,19 +23,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         auth = FirebaseAuth.getInstance()
+        mDatabase = FirebaseDatabase.getInstance()
+        mDatabaseReference = mDatabase!!.reference!!.child("Users")
 
-        if(user != null) {
-            mDatabase = FirebaseDatabase.getInstance()
-            mDatabaseReference = mDatabase.getReference("Users").child(user!!.uid)
 
-            mDatabaseReference.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    welcome_text!!.text = snapshot.child("firstName").value as String
-                }
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+
+            when(it.itemId) {
+                R.id.profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    true
+                } else ->
+                    true
+            }
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val userReference = mDatabaseReference!!.child(user!!.uid)
+
+        userReference.addValueEventListener(object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                welcome_text!!.text = snapshot.child("Username").value as String
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -51,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }
+
         }
         return super.onOptionsItemSelected(item)
     }
