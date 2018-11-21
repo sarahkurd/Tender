@@ -11,4 +11,8 @@
         <item>Mediterranean</item>
         <item>Island/Caribbean</item>
     </string-array>
+
+    <string name="title_activity_map">My Favorite Food Places</string>
+    <string name="title_activity_profile">My Profile</string>
+    <string name="question_mark">\?</string>
 </resources>

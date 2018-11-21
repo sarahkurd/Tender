@@ -31,7 +31,15 @@ class ProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         mFirestore = FirebaseFirestore.getInstance()
 
-        setUserInfo()
+        // click to edit profile
+        edit_profile.setOnClickListener {
+            editClick()
+        }
+
+        // click on card view to view user map
+        card_mymap.setOnClickListener{
+            mapsClick()
+        }
 
         bottomNavigationViewProfile.setOnNavigationItemSelectedListener {
             when(it.itemId) {
@@ -43,12 +51,22 @@ class ProfileActivity : AppCompatActivity() {
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     true
-                } else ->
+                } R.id.add_image -> {
+                    val intent = Intent(this, AddRecipeActivity::class.java)
+                    startActivity(intent)
+                    true
+                }   else ->
                 true
             }
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        setUserInfo()
+    }
+
+    // read from firestore and populate user profile information
     private fun setUserInfo() {
         var userReference: CollectionReference
         val user = auth.currentUser
@@ -60,10 +78,18 @@ class ProfileActivity : AppCompatActivity() {
             if(documentSnapshot != null){
                 val fname = documentSnapshot.get("firstName").toString()
                 val lname = documentSnapshot.get("lastName").toString()
-                println(fname)
-                println(lname)
+                val get_bio = documentSnapshot.get("bio").toString()
+                val city = documentSnapshot.get("city").toString()
+                val get_fave_cuisine = documentSnapshot.get("faveCuisine").toString()
+                val posts = documentSnapshot.get("posts").toString()
+                val tenderScore = documentSnapshot.get("tenderScore").toString()
                 users_first_name.text = fname
                 users_last_name.text = lname
+                user_location.text = city
+                user_tenderscore.text = "Tender Score: " + tenderScore
+                bio.text = get_bio
+                fave_cuisine.text = "Loves:" + get_fave_cuisine
+                num_posts.text = "Posts: " + posts
             } else {
                 Toast.makeText(this, "Document does not exist", Toast.LENGTH_SHORT).show()
             }
@@ -86,5 +112,15 @@ class ProfileActivity : AppCompatActivity() {
 
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun editClick(){
+        val intent = Intent(this, EditProfileActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun mapsClick(){
+        val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
     }
 }

@@ -1,12 +1,16 @@
 package com.example.tender
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 import com.google.firebase.auth.FirebaseUser
@@ -18,6 +22,9 @@ import kotlinx.android.synthetic.main.activity_register.*
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private var mLocationPermissionGranted: Boolean = false
+    private var fusedLocationClient: FusedLocationProviderClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +83,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    fun signOut() {
-        auth.signOut()
-        updateUI(null)
-    }
 
     private fun signIn(email: String, password: String) {
         Log.d(TAG, "signIn:$email")
@@ -113,6 +116,39 @@ class LoginActivity : AppCompatActivity() {
                     // [END_EXCLUDE]
                 }
         // [END sign_in_with_email]
+    }
+
+    private fun getLocationPermission() {
+        /*
+     * Request location permission, so that we can get the location of the
+     * device. The result of the permission request is handled by a callback,
+     * onRequestPermissionsResult.
+     */
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+    }
+
+    // handle the result of the permission request
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        mLocationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true
+                } else {
+                    Toast.makeText(this, "Location permissions recommended", Toast.LENGTH_LONG).show()
+                    finish()
+                }
+            }
+        }
     }
 
     companion object {

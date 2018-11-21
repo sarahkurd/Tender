@@ -1,9 +1,17 @@
 package com.example.tender
 
+import android.Manifest
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
+import android.location.LocationListener
+import android.content.pm.PackageManager
+import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -18,29 +26,60 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_register.*
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.Places
+import com.google.android.gms.location.places.PlaceDetectionClient
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
+
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var mFirestore: FirebaseFirestore
     private var mProgressBar: ProgressDialog? = null
+    protected var mGeoDataClient: GeoDataClient? = null
+    protected var mPlaceDetectionClient: PlaceDetectionClient? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private var mLocationPermissionGranted: Boolean = false
+    private var mLastKnownLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        //Button
+        //Button to register
         btn_register.setOnClickListener{
             createAccount(et_email.text.toString(), et_password.text.toString())
         }
 
         mProgressBar = ProgressDialog(this)
 
+        // Initialize Firebase auth and Firestore database
+        auth = FirebaseAuth.getInstance()
         mFirestore = FirebaseFirestore.getInstance()
 
-        // Initialize Firebase auth
-        auth = FirebaseAuth.getInstance()
+        // create instance of Fused location client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        // Construct a GeoDataClient.
+        mGeoDataClient = Places.getGeoDataClient(this, null)
+
+        // Construct a PlaceDetectionClient.
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null)
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        getLocationPermission()
     }
 
     private fun createAccount(email: String, password: String) {
@@ -92,16 +131,42 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun saveUserInformation(){
-        val firstName = et_first_name.text.toString()
-        val lastName = et_last_name.text.toString()
+        val first_Name = et_first_name.text.toString()
+        val last_Name = et_last_name.text.toString()
         var usersReference: CollectionReference
+        // create instance of Fused location client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val user = auth.currentUser
         if(user != null) {
+            val buildUser = User("","", "", "", null, "True", null,
+                    "", 0, "", 0.0, 0.0, 0.0)
             usersReference = mFirestore.collection("Users")
-            usersReference.document(user.uid).set(User(user.uid, firstName, lastName))
+            buildUser.firstName = first_Name
+            buildUser.lastName = last_Name
+            buildUser.userID = user.uid
+            // Define a listener that responds to location updates
+            try{
+                if(mLocationPermissionGranted) {
+                    Toast.makeText(this, "Location permissions granted", Toast.LENGTH_LONG).show()
+                    fusedLocationClient.lastLocation.addOnSuccessListener{ location: Location? ->
+                        if (location != null) {
+                            buildUser.latitude = location.latitude
+                            buildUser.longitude = location.longitude
+                        } else {
+                            Log.d(TAG, "Current location is null. Using defaults.")
+                            Toast.makeText(this, "Location is null", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            } catch (e: SecurityException){
+                Log.e("Exception: %s", e.message)
+            }
+            usersReference.document(user.uid).set(buildUser)
         }
     }
+
+
 
     private fun verifyEmail() {
         val mUser = auth.currentUser
@@ -152,6 +217,39 @@ class RegisterActivity : AppCompatActivity() {
         } else {
             join_tender.setText("Missing fields")
             btn_register.visibility = View.VISIBLE
+        }
+    }
+
+    private fun getLocationPermission() {
+        /*
+     * Request location permission, so that we can get the location of the
+     * device. The result of the permission request is handled by a callback,
+     * onRequestPermissionsResult.
+     */
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+    }
+
+    // handle the result of the permission request
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        mLocationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true
+                } else {
+                    Toast.makeText(this, "Location permissions recommended", Toast.LENGTH_LONG).show()
+                    finish()
+                }
+            }
         }
     }
 

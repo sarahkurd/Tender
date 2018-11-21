@@ -1,15 +1,19 @@
 package com.example.tender.models
 
+import android.net.Uri
+
 data class User(
-        val userID: String = "",
-        val firstName: String = "",
-        val lastName: String = "",
-        val city: String = "",
-        val profilePhotoPath: String? = null,
-        val isOnline: String = "True",
-        val backgroundPhotoPath: String? = null,
-        val bio: String = "",
-        val posts: Int = 0,
-        val faveCuisine: String = "",
-        val tenderScore: Double = 0.0)
+        var userID: String = "",
+        var firstName: String = "",
+        var lastName: String = "",
+        var city: String = "",
+        var profilePhotoPath: Uri?= null,
+        var isOnline: String = "True",
+        var backgroundPhotoPath: String? = null,
+        var bio: String = "",
+        var posts: Int = 0,
+        var faveCuisine: String = "",
+        var tenderScore: Double = 0.0,
+        var latitude: Double = 0.0,
+        var longitude: Double = 0.0)
 
