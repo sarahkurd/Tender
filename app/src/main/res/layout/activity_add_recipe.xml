@@ -1,9 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddRecipeActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/add_recipe_image_view"
+            android:layout_width="330dp"
+            android:layout_height="200dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:id="@+id/button_add_recipe_image"
+            android:layout_width="330dp"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimary"
+            android:text="Add Image"
+            android:layout_margin="5dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dish name"
+            android:textSize="18dp"
+            android:layout_marginLeft="28dp"/>
+
+        <EditText
+            android:id="@+id/et_recipe_title"
+            android:layout_width="330dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:layout_margin="5dp"
+            android:background="#11000000"
+            android:hint="Recipe Title"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prep Time"
+            android:textSize="18dp"
+            android:layout_marginLeft="28dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/prep_time_spinner"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="28dp"
+                android:entries="@array/prep_times">
+            </Spinner>
+
+            <Spinner
+                android:id="@+id/min_hour_spinner"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:entries="@array/min_hours_array">
+            </Spinner>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients"
+            android:textSize="18dp"
+            android:layout_marginLeft="28dp"/>
+
+        <LinearLayout
+            android:id="@+id/ingredient_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/ingredient_measure_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="2"
+                    android:layout_marginLeft="28dp"
+                    android:entries="@array/measurement_array">
+                </Spinner>
+
+                <Spinner
+                    android:id="@+id/tbsp_cup_spinner"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:entries="@array/tsp_tbsp_array">
+                </Spinner>
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:layout_margin="5dp"
+                    android:background="#11000000"
+                    android:hint="ingredient"
+                    android:padding="10dp"
+                    android:inputType="text"/>
+
+                <Button
+                    android:id="@+id/delete_ingredient_button"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="20dp"
+                    android:onClick="onDelete"
+                    android:background="@drawable/ic_highlight_off_black_24dp"/>
+
+            </LinearLayout>
+            <Button
+                android:id="@+id/add_ingredient_button"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Add Ingredient"
+                android:layout_margin="3dp"
+                android:onClick="onAddIngredient"
+                android:background="@color/colorAccent"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

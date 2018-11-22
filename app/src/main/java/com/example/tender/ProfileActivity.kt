@@ -55,7 +55,7 @@ class ProfileActivity : AppCompatActivity() {
                     val intent = Intent(this, AddRecipeActivity::class.java)
                     startActivity(intent)
                     true
-                }   else ->
+                } else ->
                 true
             }
         }
