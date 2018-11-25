@@ -42,6 +42,16 @@
         <item>cup(s)</item>
     </string-array>
 
+    <string-array name="categories_array">
+        <item>salad</item>
+        <item>soup</item>
+        <item>entree</item>
+        <item>appetizer</item>
+        <item>dessert</item>
+        <item>breakfast</item>
+        <item>vegetarian</item>
+    </string-array>
+
     <string name="title_activity_map">My Favorite Food Places</string>
     <string name="title_activity_profile">My Profile</string>
     <string name="question_mark">\?</string>

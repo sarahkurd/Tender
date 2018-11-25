@@ -1,11 +1,13 @@
 package com.example.tender.models
 
+import android.net.Uri
+
 data class Recipe (
         var userID: String = "",
-        var photo: String? = null,
+        var photo: Uri? = null,
         var title: String = "",
         var prepTime: String = "",
-        var ingredientList: ArrayList<String>,
+        var ingredientList: ArrayList<String> = arrayListOf(),
         var details: String = "",
         var cuisineType: String = "",
         var longitude: Double = 0.0,

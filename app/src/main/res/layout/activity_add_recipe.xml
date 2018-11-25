@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".AddRecipeActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -114,6 +118,7 @@
                 </Spinner>
 
                 <EditText
+                    android:id="@+id/et_text_ingredient"
                     android:layout_width="0dp"
                     android:layout_weight="3"
                     android:layout_height="50dp"
@@ -145,7 +150,53 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Details/Prep"
+            android:textSize="18dp"
+            android:layout_marginLeft="28dp"/>
+        <EditText
+            android:id="@+id/et_recipe_details"
+            android:layout_width="330dp"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:layout_margin="5dp"
+            android:background="#11000000"
+            android:hint="Recipe Details"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="textMultiLine" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textSize="18dp"
+            android:layout_marginLeft="28dp"/>
+        <Spinner
+            android:id="@+id/dish_category_spinner"
+            android:layout_width="330dp"
+            android:layout_height="40dp"
+            android:layout_margin="3dp"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/categories_array">
+        </Spinner>
+
+        <Button
+            android:id="@+id/add_recipe_button"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Add Recipe"
+            android:layout_margin="3dp"
+            android:background="@color/colorAccent"
+             />
+
     </LinearLayout>
+
+    </ScrollView>
 
 
 </RelativeLayout>
