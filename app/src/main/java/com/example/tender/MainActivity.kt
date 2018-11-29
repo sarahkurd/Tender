@@ -42,6 +42,11 @@ class MainActivity : AppCompatActivity() {
         mFirestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
+        card_business.setOnClickListener {
+            val intent =  Intent(this, BusinessSwipeActivity::class.java)
+            startActivity(intent)
+        }
+
         bottomNavigationView.setOnNavigationItemSelectedListener {
 
             when(it.itemId) {
@@ -61,6 +66,8 @@ class MainActivity : AppCompatActivity() {
                     true
             }
         }
+
+
 
     }
 

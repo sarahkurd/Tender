@@ -31,6 +31,8 @@ import com.example.tender.models.Recipe
 import com.example.tender.models.User
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.ingredients_row.view.*
 
 
 class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -41,13 +43,6 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private val PERMISSION_CODE = 1000
     private val IMAGE_CAPTURE_CODE = 1001
     private var image_uri: Uri ?= null
-
-    // spinner views
-    private lateinit var prepTimeSpinner : Spinner
-    private lateinit var minHoursSpinner : Spinner
-    private lateinit var ingredientSpinner1 : Spinner
-    private lateinit var ingredientSpinner2 : Spinner
-    private lateinit var categorySpinner : Spinner
 
     var ingredients = arrayListOf<String>()
     lateinit var prepTime: String
@@ -115,8 +110,8 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         // check if all fields are filled
         if(validateForm()) {
             val user = auth.currentUser
-            var recipeReference: CollectionReference = mFirestore.collection("Recipes")
-            var ingredients: ArrayList<String> = arrayListOf()
+            val userReference: CollectionReference = mFirestore.collection("Users")
+            val emptyIngredients: ArrayList<String> = arrayListOf()
 
             if (user != null) {
                 // get edit text view fields
@@ -128,18 +123,31 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 val category = dishCategory
 
                 val buildRecipe = Recipe("", null,
-                        "", "", ingredients,
+                        "", "", emptyIngredients,
                         "", "",
                         0.0, 0.0)
                 buildRecipe.userID = user.uid
                 buildRecipe.photo = image_uri
                 buildRecipe.title = title
                 buildRecipe.details = details
+
+                // get users lat and long
+                val docRef: DocumentReference = userReference.document(user.uid)
+                docRef.get().addOnSuccessListener { documentSnapshot ->
+                    if(documentSnapshot != null){
+                        val lat = documentSnapshot.get("latitude") as Double
+                        val long = documentSnapshot.get("longitude") as Double
+                        buildRecipe.latitude = lat
+                        buildRecipe.longitude = long
+                    } else {
+                        Toast.makeText(this, "Document does not exist", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 buildRecipe.prepTime = pTime
                 buildRecipe.ingredientList = ingredients
                 buildRecipe.cuisineType = category
-                var userReference: CollectionReference = recipeReference.document(user.uid).collection("MyRecipes")
-                userReference.document(title).set(buildRecipe)
+                var myRecipesReference: CollectionReference = userReference.document(user.uid).collection("MyRecipes")
+                myRecipesReference.document(title).set(buildRecipe)
             }
         }
     }
@@ -151,11 +159,13 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val rowView = inflater.inflate(R.layout.ingredients_row, null)
 
         // get fields from spinner and add to ArrayList
+        //val lastRow = ingredient_linear_layout.getChildAt(ingredient_linear_layout.childCount - 1)
         val text_ingredient = et_text_ingredient.text.toString()
         ingredients.add("$measurement $cups_tbsps $text_ingredient")
 
         // Add the new row before the add field button.
         ingredient_linear_layout.addView(rowView, ingredient_linear_layout.childCount - 1)
+
     }
 
     fun onDelete(v: View) {

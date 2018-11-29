@@ -10,7 +10,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.location.network" />
 
@@ -52,8 +54,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDVuddXAy5F3xCpV81gQAR_2eZ8efSayRo" />
 
-        <activity android:name=".AddRecipeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity
+            android:name=".AddRecipeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".BusinessSwipeActivity"></activity>
     </application>
 
 </manifest>

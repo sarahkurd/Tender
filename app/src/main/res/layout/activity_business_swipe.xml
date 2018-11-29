@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_layoutview"
+    tools:context=".BusinessSwipeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="430dp">
+
+        <Button
+            android:id="@+id/button_unlike"
+            android:layout_width="195dp"
+            android:layout_height="80dp"
+            android:text="NOPE"
+            android:background="@android:color/holo_red_dark" />
+
+        <Button
+            android:id="@+id/button_like"
+            android:layout_width="190dp"
+            android:layout_height="80dp"
+            android:text="YUM"
+            android:background="@android:color/holo_green_dark" />
+
+    </LinearLayout>
+
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavigationViewSwipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:clickable="true"
+        app:elevation="16dp"
+        app:itemIconTint="@android:color/holo_orange_dark"
+        app:itemTextColor="@android:color/holo_orange_dark"
+        app:menu="@menu/bottom_nav" />
+
+</RelativeLayout>

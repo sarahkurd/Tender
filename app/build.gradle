@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.lorentzos.swipecards:library:1.0.9'
     implementation 'com.mindorks:placeholderview:0.7.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.nihad92:SwipeableCards:1.0.19'
 }
 
 apply plugin: 'com.google.gms.google-services'
