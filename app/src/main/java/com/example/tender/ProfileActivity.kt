@@ -36,6 +36,11 @@ class ProfileActivity : AppCompatActivity() {
             editClick()
         }
 
+        // view user saved recipes
+        card_myrecipes.setOnClickListener {
+            recipeBookClick()
+        }
+
         // click on card view to view user map
         card_mymap.setOnClickListener{
             mapsClick()
@@ -61,6 +66,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
         setUserInfo()
@@ -70,7 +76,6 @@ class ProfileActivity : AppCompatActivity() {
     private fun setUserInfo() {
         var userReference: CollectionReference
         val user = auth.currentUser
-        println(user)
 
         userReference = mFirestore.collection("Users")
         val docRef: DocumentReference = userReference.document(user!!.uid)
@@ -121,6 +126,11 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun mapsClick(){
         val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun recipeBookClick() {
+        val intent = Intent(this, RecipeBookActivity::class.java)
         startActivity(intent)
     }
 }

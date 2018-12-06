@@ -4,7 +4,7 @@ import android.net.Uri
 
 data class Recipe (
         var userID: String = "",
-        var photo: Uri? = null,
+        var photo: String = "",
         var title: String = "",
         var prepTime: String = "",
         var ingredientList: ArrayList<String> = arrayListOf(),

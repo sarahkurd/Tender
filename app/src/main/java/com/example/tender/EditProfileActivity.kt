@@ -194,7 +194,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         val last_name = edit_last_name.text.toString()
-        if (TextUtils.isEmpty(first_name)) {
+        if (TextUtils.isEmpty(last_name)) {
             edit_last_name.error = "Required."
             valid = false
         } else {

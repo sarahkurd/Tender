@@ -56,6 +56,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //Button to register
         btn_register.setOnClickListener{
@@ -94,6 +95,11 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun buildLocationCallBack() {
@@ -177,7 +183,7 @@ class RegisterActivity : AppCompatActivity() {
 
         val user = auth.currentUser
         if(user != null) {
-            val buildUser = User("","", "", "", null, "True", null,
+            val buildUser = User("","", "", "", null, false, null,
                     "", 0, "", 0.0, 0.0, 0.0)
             usersReference = mFirestore.collection("Users")
             buildUser.firstName = first_Name
@@ -185,6 +191,7 @@ class RegisterActivity : AppCompatActivity() {
             buildUser.userID = user.uid
             buildUser.latitude = userLat
             buildUser.longitude = userLong
+            buildUser.isOnline = true
 
             usersReference.document(user.uid).set(buildUser)
         }

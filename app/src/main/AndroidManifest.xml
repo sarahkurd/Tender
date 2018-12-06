@@ -37,15 +37,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity
-            android:name=".RegisterActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".RegisterActivity" />
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile" />
         <activity
             android:name=".EditProfileActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:label="Edit Profile" />
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_map" />
@@ -56,8 +54,10 @@
 
         <activity
             android:name=".AddRecipeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".BusinessSwipeActivity"></activity>
+            android:label="Create Recipe" />
+        <activity android:name=".BusinessSwipeActivity" />
+        <activity android:name=".RecipeBookActivity" />
+        <activity android:name=".NeighborsSwipeActivity"></activity>
     </application>
 
 </manifest>

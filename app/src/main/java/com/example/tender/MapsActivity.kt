@@ -24,62 +24,43 @@ import android.widget.Toast
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.maps.model.CameraPosition
-
-
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var mFirestore: FirebaseFirestore
     private lateinit var mMap: GoogleMap
     private val mCameraPosition: CameraPosition? = null
 
-    protected var mGeoDataClient: GeoDataClient? = null
-    protected var mPlaceDetectionClient: PlaceDetectionClient? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
     private var mLocationPermissionGranted: Boolean = false
+    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
 
-    private val mDefaultLocation = LatLng(-33.8523341, 151.2106085)
-    private val DEFAULT_ZOOM = 15f
-
-    private lateinit var mLastKnownLocation: Location
-    private lateinit var mLocationRequest: LocationRequest
-    private lateinit var locationCallback : LocationCallback
-    private var userLat: Double = 0.0
-    private var userLong: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        // Construct a GeoDataClient.
-        mGeoDataClient = Places.getGeoDataClient(this, null)
-
-        // Construct a PlaceDetectionClient.
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null)
+        auth = FirebaseAuth.getInstance()
+        mFirestore = FirebaseFirestore.getInstance()
 
         // Prompt the user for permission.
         getLocationPermission()
-        try {
-            if (mLocationPermissionGranted) {
-                buildLocationRequest()
-                buildLocationCallBack()
-
-                // create instance of Fused location client
-                fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-                fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper())
-            } else {
-                Toast.makeText(this, "Location off", Toast.LENGTH_SHORT).show()
-            }
-        }catch (e:SecurityException){
-            Log.e("Exception", "************")
-        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     /**
@@ -96,6 +77,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI()
+
+        if(mLocationPermissionGranted){
+            // place user location on map
+            val user = auth.currentUser
+            var userReference: CollectionReference = mFirestore.collection("Users")
+
+            val docRef: DocumentReference = userReference.document(user!!.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                if(documentSnapshot != null) {
+                    val lat = documentSnapshot.get("latitude") as Double
+                    val long = documentSnapshot.get("longitude") as Double
+                    mMap.addMarker(MarkerOptions().position(LatLng(lat, long)).title("Current Location"))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, long)))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 12.0f))
+                } else {
+                    Toast.makeText(this, "Document does not exist", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
     }
 
@@ -142,6 +142,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (mLocationPermissionGranted) {
                 mMap.isMyLocationEnabled = true
                 mMap.uiSettings.isMyLocationButtonEnabled = true
+                mMap.uiSettings.isZoomControlsEnabled = true
             } else {
                 mMap.isMyLocationEnabled = false
                 mMap.uiSettings.isMyLocationButtonEnabled = false
@@ -151,63 +152,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.e("Exception: %s", e.message)
         }
     }
-
-    private fun buildLocationCallBack() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                mLastKnownLocation = p0!!.locations.get(p0.locations.size-1) // get last location
-                userLat = mLastKnownLocation.latitude
-                userLong = mLastKnownLocation.longitude
-                mMap.addMarker(MarkerOptions().position(LatLng(userLat, userLong)).title("My Location"))
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        LatLng(userLat, userLong), DEFAULT_ZOOM))
-            }
-        }
-
-    }
-
-    private fun buildLocationRequest() {
-        mLocationRequest = LocationRequest()
-        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest.interval = 5000
-        mLocationRequest.fastestInterval = 3000
-        mLocationRequest.smallestDisplacement = 10f
-
-    }
-
-
-    // use fused location provider to find devices last known location
-    // use location to position map
-//    private fun getDeviceLocation() {
-//        /*
-//     * Get the best and most recent location of the device, which may be null in rare
-//     * cases when a location is not available.
-//     */
-//        try {
-//            if (mLocationPermissionGranted) {
-//                val locationResult = fusedLocationClient.lastLocation
-//                locationResult.addOnCompleteListener { task ->
-//                        if (task.isSuccessful) {
-//                            // Set the map's camera position to the current location of the device.
-//                            mLastKnownLocation = task.result
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                                    LatLng(mLastKnownLocation!!.latitude,
-//                                            mLastKnownLocation!!.longitude), DEFAULT_ZOOM))
-//                        } else {
-//                            Log.d(TAG, "Current location is null. Using defaults.")
-//                            Log.e(TAG, "Exception: %s", task.exception)
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM))
-//                            mMap.uiSettings.isMyLocationButtonEnabled = false
-//                        }
-//
-//                    }
-//
-//                }
-//        } catch (e: SecurityException) {
-//            Log.e("Exception: %s", e.message)
-//        }
-//
-//    }
 
     companion object {
         private const val TAG = "Maps Activity"

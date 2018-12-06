@@ -21,24 +21,34 @@ import kotlinx.android.synthetic.main.card.view.*
 import org.w3c.dom.Text
 import java.util.*
 import kotlin.collections.ArrayList
+import android.R.attr.apiKey
+import android.app.ProgressDialog
+import android.os.AsyncTask
+import android.util.Log
+import com.yelp.fusion.client.connection.YelpFusionApi
+import com.yelp.fusion.client.connection.YelpFusionApiFactory
+import com.yelp.fusion.client.models.SearchResponse
+import okhttp3.OkHttpClient
+import java.io.IOException
+import kotlin.collections.HashMap
 
+
+@Suppress("DEPRECATION")
 class BusinessSwipeActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var mFirestore: FirebaseFirestore
+    lateinit var context: Context
 
     var users : ArrayList<User> = arrayListOf()
     lateinit var imageV : ImageView
-    lateinit var relativeLayoutContainer : RelativeLayout
-    lateinit var layoutTVparams : ViewGroup.LayoutParams
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_swipe)
+        context = this
 
-        getData()
 
         // Get the LayoutInflater from Context
         val layoutInflater: LayoutInflater = LayoutInflater.from(applicationContext)
@@ -64,23 +74,12 @@ class BusinessSwipeActivity : AppCompatActivity() {
                 true
             }
         }
+
+        // AsyncTask to dislpay images from Yelp api
+        //FetchPictures().execute()
     }
 
-    private fun getData() {
-        val user1 = User()
-        user1.firstName = "Sally"
-        users.add(user1)
 
-        val user2 = User()
-        user2.firstName = "Sarah"
-        users.add(user2)
-
-        val user3 = User()
-        user3.firstName = "Kevin"
-        users.add(user3)
-
-
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_nav, menu)
@@ -105,6 +104,43 @@ class BusinessSwipeActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // For downloading / making an API call while other code is running
+    inner class FetchRestaurants: AsyncTask<String, String, String>() {
+
+        lateinit var progressDialog : ProgressDialog
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            progressDialog = ProgressDialog(context)
+            progressDialog.setMessage("Searching around you...")
+            progressDialog.show()
+        }
+
+        override fun doInBackground(vararg parameters: String?): String? {
+            val client = OkHttpClient()
+            val url =
+
+            return null
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            progressDialog.dismiss()
+            //handleJson(result)
+        }
+
+        // change ImageView here (be able to touch the main thread)
+        override fun onProgressUpdate(vararg values: String?) {
+            super.onProgressUpdate(*values)
+        }
+
+
+    }
+
+    private fun handleJson(jsonString: String) {
+
     }
 
 

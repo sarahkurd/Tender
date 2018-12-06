@@ -161,6 +161,7 @@ class LoginActivity : AppCompatActivity() {
                         val user = auth.currentUser
                         map.put("latitude", userLat)
                         map.put("longitude", userLong)
+                        map.put("isOnline", true)
                         userReference = mFirestore.collection("Users")
                         userReference.document(user!!.uid).update(map)
                         updateUI(user)
