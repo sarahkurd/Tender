@@ -15,14 +15,14 @@
         android:layout_marginTop="430dp">
 
         <Button
-            android:id="@+id/button_unlike"
+            android:id="@+id/button_unlike_neighbors"
             android:layout_width="195dp"
             android:layout_height="80dp"
             android:text="NOPE"
             android:background="@android:color/holo_red_dark" />
 
         <Button
-            android:id="@+id/button_like"
+            android:id="@+id/button_like_neighbors"
             android:layout_width="190dp"
             android:layout_height="80dp"
             android:text="YUM"

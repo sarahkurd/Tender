@@ -47,6 +47,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        card_local.setOnClickListener {
+            val intent =  Intent(this, NeighborsSwipeActivity::class.java)
+            startActivity(intent)
+        }
+
         bottomNavigationView.setOnNavigationItemSelectedListener {
 
             when(it.itemId) {

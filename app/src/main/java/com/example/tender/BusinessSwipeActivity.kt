@@ -120,7 +120,7 @@ class BusinessSwipeActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg parameters: String?): String? {
             val client = OkHttpClient()
-            val url =
+
 
             return null
         }
