@@ -34,7 +34,7 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="100dp"
                     android:clickable="true"
                     android:id="@+id/profile_image"
                     android:src="@drawable/ic_account_circle_black_24dp"

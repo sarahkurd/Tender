@@ -19,14 +19,34 @@
             android:layout_width="195dp"
             android:layout_height="80dp"
             android:text="NOPE"
+            android:radius="15dp"
             android:background="@android:color/holo_red_dark" />
 
         <Button
             android:id="@+id/button_like_neighbors"
             android:layout_width="190dp"
             android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:radius="15dp"
             android:text="YUM"
             android:background="@android:color/holo_green_dark" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right"
+        android:layout_marginTop="515dp">
+
+        <Button
+            android:id="@+id/button_done"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Done"
+            android:layout_marginRight="10dp"
+            android:background="@color/colorPrimary" />
 
     </LinearLayout>
 

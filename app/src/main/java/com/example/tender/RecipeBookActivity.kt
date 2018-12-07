@@ -33,6 +33,7 @@ class RecipeBookActivity : AppCompatActivity() {
     internal var storage: FirebaseStorage?= null
 
     var context: Context = this
+    var recipeList: ArrayList<Recipe> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +69,53 @@ class RecipeBookActivity : AppCompatActivity() {
             }
         }
 
-        GetMyRecipes().execute()
+        var userReference: CollectionReference = mFirestore.collection("Users")
+
+        // load initital recycler view with MyRecipes documents
+        val recipeReference: CollectionReference = userReference.document(user!!.uid).collection("MyRecipes")
+        recipeReference.get().addOnSuccessListener { querySnapshot ->
+            // go though all docs in collection
+            for (document in querySnapshot) {
+                val gotRecipe = document.toObject(Recipe::class.java)
+                recipeList.add(gotRecipe)
+            }
+            val adapter = CustomAdapter(recipeList, false, this)
+            recyclerView.adapter = adapter
+        }
+
+        // listen for View my recipes button click
+        button_view_myrecipes.setOnClickListener {
+            var getMyRecipes : ArrayList<Recipe> = arrayListOf()
+            val myRecipeReference: CollectionReference = userReference.document(user!!.uid).collection("MyRecipes")
+            myRecipeReference.get().addOnSuccessListener { querySnapshot ->
+                // go though all docs in collection
+                for (document in querySnapshot) {
+                    val gotRecipe = document.toObject(Recipe::class.java)
+                    getMyRecipes.add(gotRecipe)
+                }
+                val adapter = CustomAdapter(getMyRecipes, false, this)
+                recyclerView.adapter = adapter
+            }
+        }
+
+        // query recipes from MyFavorites Collection on this button clikc
+        // and display in recycler view
+        button_view_favorites.setOnClickListener {
+            var getFavorites : ArrayList<Recipe> = arrayListOf()
+            val favoriteReference: CollectionReference = userReference.document(user!!.uid).collection("MyFavorites")
+            favoriteReference.get().addOnSuccessListener { querySnapshot ->
+                // go though all docs in collection
+                for (document in querySnapshot) {
+                    val gotRecipe = document.toObject(Recipe::class.java)
+                    getFavorites.add(gotRecipe)
+                }
+                val adapter = CustomAdapter(getFavorites, false, this)
+                recyclerView.adapter = adapter
+            }
+        }
+
+
+        //GetMyRecipes().execute()
 
     }
 
@@ -112,8 +159,8 @@ class RecipeBookActivity : AppCompatActivity() {
             super.onPostExecute(result)
             //progressDialog.dismiss()
 
-            val adapter = CustomAdapter(result!!)
-            recyclerView.adapter = adapter
+//            val adapter = CustomAdapter(result!!, false, this)
+//            recyclerView.adapter = adapter
 
         }
 

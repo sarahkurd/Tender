@@ -72,7 +72,9 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private var getLat : Double = 0.0
     private var getLong : Double = 0.0
     private var getPosts : Long = 0
-    private lateinit var downloadURL : String
+    private var downloadURL : String ?= null
+
+    private val PICK_IMAGE_REQUEST = 1234
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +97,10 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
             saveRecipe()
         }
 
+        button_upload_recipe_image.setOnClickListener {
+            showFileChooser()
+        }
+
         // spinner adapters
         prep_time_spinner.onItemSelectedListener = this
         min_hour_spinner.onItemSelectedListener = this
@@ -109,6 +115,13 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
+    }
+
+    private fun showFileChooser() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), PICK_IMAGE_REQUEST)
     }
 
     // Interface for Spinners
@@ -162,7 +175,10 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                         "", "",
                         0.0, 0.0)
                 buildRecipe.userID = user.uid
-                buildRecipe.photo = downloadURL
+
+                if(downloadURL != null) {
+                    buildRecipe.photo = downloadURL!!
+                }
                 buildRecipe.title = title
                 buildRecipe.details = details
 
@@ -210,8 +226,12 @@ class AddRecipeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     // return Intent after taking photo
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        // if taking picture
         if(requestCode == IMAGE_CAPTURE_CODE && resultCode == Activity.RESULT_OK) {
-            //add_recipe_image_view.setImageURI(image_uri)
+            uploadFile()
+        } else if(requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            // if uploading image
+            image_uri = data.data
             uploadFile()
         }
     }

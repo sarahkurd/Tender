@@ -55,9 +55,14 @@
         <activity
             android:name=".AddRecipeActivity"
             android:label="Create Recipe" />
-        <activity android:name=".BusinessSwipeActivity" />
-        <activity android:name=".RecipeBookActivity" />
-        <activity android:name=".NeighborsSwipeActivity"></activity>
+        <activity android:name=".BusinessSwipeActivity"
+            android:label="Businesses"/>
+        <activity android:name=".RecipeBookActivity"
+            android:label="My Recipe Book"/>
+        <activity android:name=".NeighborsSwipeActivity"
+            android:label="Local Recipes"/>
+        <activity android:name=".SelectFavoritesActivity"
+            android:label="Choose Favorite Recipes"></activity>
     </application>
 
 </manifest>

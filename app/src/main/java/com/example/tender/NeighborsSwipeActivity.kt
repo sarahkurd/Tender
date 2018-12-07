@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -123,6 +124,18 @@ class NeighborsSwipeActivity : AppCompatActivity() {
                 }
             }
         }
+
+        button_done.setOnClickListener {
+            val intent = Intent(this, SelectFavoritesActivity::class.java)
+            if(favoriteRecipes.isNotEmpty()){
+                intent.putParcelableArrayListExtra("list", favoriteRecipes)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "No Favorites Selected Yet", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // AsyncTask
         //GetUserRecipes().execute()
 
     }
