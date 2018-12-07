@@ -7,7 +7,7 @@ data class User(
         var firstName: String = "",
         var lastName: String = "",
         var city: String = "",
-        var profilePhotoPath: Uri ?= null,
+        var profilePhotoPath: String = "",
         var isOnline: Boolean = false,
         var backgroundPhotoPath: String? = null,
         var bio: String = "",

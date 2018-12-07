@@ -183,7 +183,7 @@ class RegisterActivity : AppCompatActivity() {
 
         val user = auth.currentUser
         if(user != null) {
-            val buildUser = User("","", "", "", null, false, null,
+            val buildUser = User("","", "", "", "", false, null,
                     "", 0, "", 0.0, 0.0, 0.0)
             usersReference = mFirestore.collection("Users")
             buildUser.firstName = first_Name

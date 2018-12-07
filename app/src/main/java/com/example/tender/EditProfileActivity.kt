@@ -15,6 +15,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.tender.models.User
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -22,6 +24,9 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_add_recipe.*
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -40,6 +45,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var mFirestore: FirebaseFirestore
+    private var downloadURL : String ?= null
 
     private val PICK_IMAGE_REQUEST = 1234
 
@@ -68,9 +74,13 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 val fname = documentSnapshot.get("firstName").toString()
                 val lname = documentSnapshot.get("lastName").toString()
                 val bio = documentSnapshot.get("bio").toString()
+                val photo = documentSnapshot.get("profilePhotoPath").toString()
                 val city = documentSnapshot.get("city").toString()
                 edit_first_name.setText(fname)
                 edit_last_name.setText(lname)
+                if(photo != "") {
+                    Picasso.get().load(photo).fit().into(edit_profile_image_view)
+                }
                 edit_bio.setText(bio)
                 edit_from_location.setText(city)
             }
@@ -116,6 +126,22 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                         progressDialogue.setMessage("Uploaded " + progress.toInt() + "% ...")
                     }
 
+            // after uploading image to storage, get upload URL and store in recipe
+            val uploadTask = imageRef.putFile(filePath!!)
+            val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let {
+                        throw it
+                    }
+                }
+                return@Continuation imageRef.downloadUrl
+            }).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    downloadURL = task.result.toString()
+                    Picasso.get().load(downloadURL).fit().into(edit_profile_image_view)
+                }
+            }
+
         }
     }
 
@@ -125,8 +151,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 resultCode == Activity.RESULT_OK && data != null && data.data != null){
             filePath = data.data
             try {
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
-                edit_profile_image_view.setImageBitmap(bitmap)
+                uploadFile()
             } catch(e: IOException) {
                 e.printStackTrace()
             }
@@ -136,14 +161,16 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private fun saveUserInformation(){
         if(validateForm()){
             val map: MutableMap<String, Any> = mutableMapOf()
-            val profile_photo_path = filePath.toString()
+//            val profile_photo_path = filePath.toString()
             val first_name = edit_first_name.text.toString()
             val last_name = edit_last_name.text.toString()
             val city = edit_from_location.text.toString()
             val bio = edit_bio.text.toString()
             var usersReference: CollectionReference
 
-            map.put("profilePhotoPath", profile_photo_path)
+            if(downloadURL != null){
+                map.put("profilePhotoPath", downloadURL!!)
+            }
             map.put("firstName", first_name)
             map.put("lastName", last_name)
             map.put("city", city)
@@ -152,7 +179,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             val user = auth.currentUser
             if(user != null) {
                 usersReference = mFirestore.collection("Users")
-                uploadFile()
                 usersReference.document(user.uid).update(map)
                 Toast.makeText(this, "Profile Updated", Toast.LENGTH_LONG).show()
                 updateUI()

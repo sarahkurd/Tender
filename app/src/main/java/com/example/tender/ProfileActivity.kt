@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.*
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import java.util.*
@@ -27,6 +28,8 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        Picasso.get().load(R.drawable.tenders).fit().into(background_image)
 
         auth = FirebaseAuth.getInstance()
         mFirestore = FirebaseFirestore.getInstance()
@@ -88,9 +91,13 @@ class ProfileActivity : AppCompatActivity() {
                 val get_fave_cuisine = documentSnapshot.get("faveCuisine").toString()
                 val posts = documentSnapshot.get("posts").toString()
                 val tenderScore = documentSnapshot.get("tenderScore").toString()
+                val photo = documentSnapshot.get("profilePhotoPath").toString()
                 users_first_name.text = fname
                 users_last_name.text = lname
                 user_location.text = city
+                if(photo != ""){
+                    Picasso.get().load(photo).fit().into(profile_image)
+                }
                 user_tenderscore.text = "Tender Score: " + tenderScore
                 bio.text = get_bio
                 fave_cuisine.text = "Loves:" + get_fave_cuisine

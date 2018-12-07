@@ -17,33 +17,44 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_add_recipe.*
 import kotlinx.android.synthetic.main.activity_business_swipe.*
 import kotlinx.android.synthetic.main.activity_neighbors_swipe.*
+import kotlinx.android.synthetic.main.card.*
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NeighborsSwipeActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var mFirestore: FirebaseFirestore
+    private var mFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     // Firebase Image Store
     internal var storageReference: StorageReference?= null
     internal var storage: FirebaseStorage?= null
 
     lateinit var imageV : ImageView
-    lateinit var context: Context
+    var context: Context = this
+
+    private var curr = 0
+    private var images = arrayOf(R.drawable.chickentenders, R.drawable.tenderlogo,  R.drawable.tenders)
+    var favoriteRecipes : ArrayList<Recipe> = arrayListOf()
+
+    private var recipeList : ArrayList<Recipe> = arrayListOf()
 
     private var getLat : Double = 0.0
     private var getLong : Double = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_neighbors_swipe)
-        context = this
 
         // Initialize Firebase auth and Firestore database
         auth = FirebaseAuth.getInstance()
-        mFirestore = FirebaseFirestore.getInstance()
 
         // Initialize storage
         storage = FirebaseStorage.getInstance()
@@ -88,8 +99,62 @@ class NeighborsSwipeActivity : AppCompatActivity() {
             }
         }
 
-        GetUserRecipes().execute()
+        var userReference: CollectionReference = mFirestore.collection("Users")
+        var myDocuments: ArrayList<QueryDocumentSnapshot> = arrayListOf()
+
+        userReference.get().addOnSuccessListener { querySnapshot ->
+            // go though all users in database
+            for (document in querySnapshot) {
+                myDocuments.add(document)
+            }
+
+            var recipesReference: CollectionReference
+            for (doc in myDocuments) {
+                recipesReference = doc.reference.collection("MyRecipes")
+                recipesReference.get().addOnSuccessListener { recipes ->
+                    for (recipe in recipes) {
+                        val gotRecipe = recipe.toObject(Recipe::class.java)
+                        recipeList.add(gotRecipe)
+                    }
+                    setInitialImage()
+                    setImageRotateListener()
+                }.addOnFailureListener {
+                    Log.d("error", "EROROROROROROR")
+                }
+            }
+        }
+        //GetUserRecipes().execute()
+
     }
+
+    private fun setInitialImage() {
+        setCurrImage()
+    }
+
+    private fun setCurrImage() {
+        Picasso.get().load(recipeList[curr].photo).fit().into(imageV)
+    }
+
+    private fun setImageRotateListener() {
+        button_like_neighbors.setOnClickListener {
+            favoriteRecipes.add(recipeList[curr])
+            Toast.makeText(this, "Added to List", Toast.LENGTH_SHORT).show()
+            curr++
+            if(curr == recipeList.size){
+                curr = 0
+            }
+            setCurrImage()
+        }
+
+        button_unlike_neighbors.setOnClickListener {
+            curr++
+            if(curr == recipeList.size){
+                curr = 0
+            }
+            setCurrImage()
+        }
+    }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -117,11 +182,14 @@ class NeighborsSwipeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
     @Suppress("DEPRECATION")
     inner class GetUserRecipes : AsyncTask<Void, Void, ArrayList<Recipe>>() {
 
         lateinit var progressDialog : ProgressDialog
-        var recipeList : ArrayList<Recipe> = arrayListOf()
+        private var recipeList : ArrayList<Recipe> = arrayListOf()
+        private var currImage : Int = 0
+
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -133,13 +201,30 @@ class NeighborsSwipeActivity : AppCompatActivity() {
         // return list of all recipes around current user
         override fun doInBackground(vararg params: Void?): ArrayList<Recipe> {
             var userReference: CollectionReference = mFirestore.collection("Users")
-            val user = auth.currentUser
-            var RecipesReference: CollectionReference
+            var myDocuments: ArrayList<QueryDocumentSnapshot> = arrayListOf()
 
             userReference.get().addOnSuccessListener { querySnapshot ->
-                    // go though all users in database
-                    for(document in querySnapshot){
-                        RecipesReference = document.reference.collection("MyRecipes")
+                // go though all users in database
+                for (document in querySnapshot) {
+                    myDocuments.add(document)
+                }
+
+                for (doc in myDocuments) {
+                    val recipesReference: CollectionReference = doc.reference.collection("MyRecipes")
+                    recipesReference.get().addOnSuccessListener { recipes ->
+                        for (recipe in recipes) {
+                            val gotRecipe = recipe.toObject(Recipe::class.java)
+                            recipeList.add(gotRecipe)
+                        }
+                    }.addOnFailureListener {
+                        Log.d("error", "EROROROROROROR")
+                    }
+                }
+            }
+            return recipeList
+        }
+//                        val RecipesReference: CollectionReference = document.reference.collection("MyRecipes")
+                        // query based on lat and long
 //                        var recipeQuery1 = RecipesReference.whereGreaterThan("latitude", getLat - 2)
 //                        var recipeQuery2 = recipeQuery1.whereLessThan("latitude", getLat + 2)
 //                        var recipeQuery3 = RecipesReference.whereLessThan("longitude", getLong + 2)
@@ -153,25 +238,48 @@ class NeighborsSwipeActivity : AppCompatActivity() {
 //                        }.addOnFailureListener {
 //                            Log.d("GettingData", "Error querying")
 //                        }
-                        RecipesReference.get().addOnSuccessListener { documents->
-                            if(documents != null ){
-                                for(doc in documents){
-                                    val gotRecipe = doc.toObject(Recipe::class.java)
-                                    recipeList.add(gotRecipe)
-                                }
-                            }
+//                        RecipesReference.get().addOnSuccessListener { documents->
+//                            if(documents != null){
+//                                for(doc in documents){
+//                                    val gotRecipe = doc.toObject(Recipe::class.java)
+//                                    recipeList.add(gotRecipe)
+//                                }
+//                            }
+//                        }.addOnFailureListener {
+//                            Log.d("failure", "FAILURE!!!!")
+//                        }
 
-                        }
-                    }
-                }
-
-            return recipeList
-        }
 
         override fun onPostExecute(result: ArrayList<Recipe>?) {
             super.onPostExecute(result)
             progressDialog.dismiss()
+//            setInitialImage()
+//            setImageRotateListener()
         }
 
+        private fun setInitialImage() {
+            setCurrImage()
+        }
+
+        private fun setCurrImage() {
+            Picasso.get().load(recipeList[currImage].photo).fit().into(imageV)
+        }
+
+        private fun setImageRotateListener() {
+            button_like_neighbors.setOnClickListener {
+                currImage++
+                if(currImage == recipeList.size){
+                    currImage = 0
+                }
+                setCurrImage()
+            }
+            button_unlike_neighbors.setOnClickListener {
+                currImage++
+                if(currImage == recipeList.size){
+                    currImage = 0
+                }
+                setCurrImage()
+            }
+        }
     }
 }
