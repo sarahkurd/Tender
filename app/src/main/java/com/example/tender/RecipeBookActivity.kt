@@ -79,7 +79,7 @@ class RecipeBookActivity : AppCompatActivity() {
                 val gotRecipe = document.toObject(Recipe::class.java)
                 recipeList.add(gotRecipe)
             }
-            val adapter = CustomAdapter(recipeList, false, this)
+            val adapter = CustomAdapter(recipeList, false, true,this)
             recyclerView.adapter = adapter
         }
 
@@ -93,7 +93,7 @@ class RecipeBookActivity : AppCompatActivity() {
                     val gotRecipe = document.toObject(Recipe::class.java)
                     getMyRecipes.add(gotRecipe)
                 }
-                val adapter = CustomAdapter(getMyRecipes, false, this)
+                val adapter = CustomAdapter(getMyRecipes, false, true, this)
                 recyclerView.adapter = adapter
             }
         }
@@ -109,7 +109,7 @@ class RecipeBookActivity : AppCompatActivity() {
                     val gotRecipe = document.toObject(Recipe::class.java)
                     getFavorites.add(gotRecipe)
                 }
-                val adapter = CustomAdapter(getFavorites, false, this)
+                val adapter = CustomAdapter(getFavorites, false, true,this)
                 recyclerView.adapter = adapter
             }
         }

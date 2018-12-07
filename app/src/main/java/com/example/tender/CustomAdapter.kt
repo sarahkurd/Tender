@@ -5,24 +5,22 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.example.tender.models.Recipe
 import com.squareup.picasso.Picasso
 
-class CustomAdapter(val recipeList:ArrayList<Recipe>, val isFavorites: Boolean, val ctx: Context) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class CustomAdapter(val recipeList:ArrayList<Recipe>, val isFavorites: Boolean, val isDelete: Boolean, val ctx: Context) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     var selectedList : ArrayList<Recipe> = arrayListOf()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         lateinit var v:View
-        if(isFavorites){
+        if(isFavorites) {
             v = LayoutInflater.from(p0.context).inflate(R.layout.recycler_view_details_w_checkbox, p0, false)
+        } else if(isDelete){
+            v = LayoutInflater.from(p0.context).inflate(R.layout.recycler_view_details_w_delete, p0, false)
         } else {
             v = LayoutInflater.from(p0.context).inflate(R.layout.recycler_view_details, p0, false)
-
         }
         return ViewHolder(v)
     }
@@ -53,6 +51,18 @@ class CustomAdapter(val recipeList:ArrayList<Recipe>, val isFavorites: Boolean, 
                 } else {
                     selectedList.add(recipeList[pos])
                 }
+            }
+
+            // check if we need to have the delete option in a row
+        } else if(isDelete) {
+            val delete = p0.itemView.findViewById(R.id.delete_recipe_button) as ImageView
+            delete.tag = position
+            delete.setOnClickListener {
+                val pos: Int = Integer.parseInt(delete.tag.toString())
+                recipeList.removeAt(pos)
+                notifyItemRemoved(pos)
+                notifyItemRangeChanged(pos, recipeList.size)
+                Toast.makeText(ctx, "Recipe removed", Toast.LENGTH_SHORT).show()
             }
         }
     }

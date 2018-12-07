@@ -38,7 +38,7 @@ class SelectFavoritesActivity : AppCompatActivity() {
         linearLayoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         favoritesRecyclerView.layoutManager = linearLayoutManager
 
-        val adapter = CustomAdapter(getFavoritesList, true, this)
+        val adapter = CustomAdapter(getFavoritesList, true, false,this)
         favoritesRecyclerView.adapter = adapter
 
         // take list of clicked items from adapter

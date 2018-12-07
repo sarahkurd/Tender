@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/recyclerViewImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/holo_green_dark"
+        android:layout_margin="10dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/recyclerViewName"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/recyclerViewImage"
+        android:layout_toRightOf="@+id/recyclerViewImage"
+        android:text="TextView"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/recyclerViewDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recyclerViewName"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/recyclerViewImage"
+        android:layout_toRightOf="@+id/recyclerViewImage"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="This is a very long text and we need to show dots after" />
+
+    <TextView
+        android:id="@+id/recyclerViewPrepTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_alignBaseline="@id/recyclerViewName"
+        android:layout_toLeftOf="@+id/delete_recipe_button"
+        android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/delete_recipe_button"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_highlight_off_black_24dp" />
+
+</RelativeLayout>
